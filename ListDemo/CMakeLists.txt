@@ -1,16 +1,34 @@
 #Cmake file for ListDemo
 #Author: Qi Gao(monkgau@gmail.com)
 #Created: 2012/9/17
+PROJECT(ListDemo)
+MESSAGE(STATUS "${PROJECT_NAME}")
+MESSAGE(STATUS "    PROJECT_VERSION:    ${PROJECT_VERSION}")
+MESSAGE(STATUS "    PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
+MESSAGE(STATUS "    PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
+MESSAGE(STATUS "    CMAKE_SOURCE_DIR:   ${CMAKE_SOURCE_DIR}")
 
-set(source_files Main.cpp)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+FILE(GLOB_RECURSE RESOURCE_FILES
+    ${PROJECT_SOURCE_DIR}/*.rc
+    ${PROJECT_SOURCE_DIR}/resource.h
+)
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-add_executable(ListDemo ${source_files})
-add_dependencies(ListDemo duilib)
-target_link_libraries(ListDemo duilib)
-set_target_properties(ListDemo PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+FILE(GLOB_RECURSE INCLUDE_FILES
+    ${PROJECT_SOURCE_DIR}/*.h
+    ${PROJECT_SOURCE_DIR}/*.hpp
+)
 
-add_custom_command(TARGET ListDemo POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  ${PROJECT_BINARY_DIR}/bin/ListDemo.exe ${PROJECT_SOURCE_DIR}/bin/ListDemo.exe)
+FILE(GLOB_RECURSE SRC_FILES
+    ${PROJECT_SOURCE_DIR}/*.c
+    ${PROJECT_SOURCE_DIR}/*.cpp
+)
+
+ADD_EXECUTABLE(
+    ${PROJECT_NAME}
+    ${SRC_FILES}
+    ${INCLUDE_FILES}
+    ${RESOURCE_FILES}
+)
+
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} DuiLib)

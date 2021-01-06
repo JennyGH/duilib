@@ -5,22 +5,93 @@
 #  CMake files for duilib
 #  file for each app is under the related sub-dir
 #
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+PROJECT(DuiLib)
 
-cmake_minimum_required(VERSION 2.8)
+MESSAGE(STATUS "PROJECT INFO:")
+MESSAGE(STATUS "    CMAKE_PROJECT_NAME:         ${CMAKE_PROJECT_NAME}")
+MESSAGE(STATUS "    CMAKE_BUILD_TYPE:           ${CMAKE_BUILD_TYPE}")
+MESSAGE(STATUS "    CMAKE_SOURCE_DIR:           ${CMAKE_SOURCE_DIR}")
+MESSAGE(STATUS "    CMAKE_PROJECT_VERSION:      ${CMAKE_PROJECT_VERSION}")
+MESSAGE(STATUS "    CMAKE_CXX_COMPILE_FEATURES: ${CMAKE_CXX_COMPILE_FEATURES}")
 
-project(dui)
+MESSAGE(STATUS "SYSTEM INFO:")
+MESSAGE(STATUS "    CMAKE_SYSTEM_NAME:      ${CMAKE_SYSTEM_NAME}")
+MESSAGE(STATUS "    CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
+MESSAGE(STATUS "    CMAKE_SIZEOF_VOID_P:    ${CMAKE_SIZEOF_VOID_P}")
 
-message(STATUS," CMake project files for duilib")
+########## For different platform ##########
+IF(UNIX AND NOT APPLE)
+    SET(LINUX 1)
+    ADD_DEFINITIONS(-DLINUX=1)
+ENDIF(UNIX AND NOT APPLE)
 
-# this line is for UNICODE release,which is required by DuiDesigner 
-add_definitions(-DUNICODE -D_UNICODE)
+IF(APPLE)
+    SET(APPLE 1)
+    ADD_DEFINITIONS(-DAPPLE=1)
+ENDIF(APPLE)
 
-# add each CMake file
-add_subdirectory(duilib)
-add_subdirectory(360SafeDemo)
-add_subdirectory(FlashDemo)
-add_subdirectory(GameDemo)
-add_subdirectory(ListDemo)
-# add_subdirectory(MenuDemo) the sources in this project has error
-add_subdirectory(QQDemo)
-add_subdirectory(RichListDemo)
+IF(WIN32)
+    SET(WINDOWS 1)
+    ADD_DEFINITIONS(-DWINDOWS=1)
+ENDIF(WIN32)
+###########################################
+
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY     "${CMAKE_BINARY_DIR}/bin")
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY     "${CMAKE_BINARY_DIR}/bin")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY     "${CMAKE_BINARY_DIR}/bin")
+
+IF(WINDOWS)
+    SET(CMAKE_C_FLAGS                  "${CMAKE_C_FLAGS}   /MP")
+    SET(CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS} /MP")
+    SET(CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE} /O2 /W0")
+ELSE(WINDOWS)
+    SET(CMAKE_C_FLAGS                  "${CMAKE_C_FLAGS}   -fPIC")
+    SET(CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS} -fPIC")
+	SET(CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE} -O3 -w")
+ENDIF(WINDOWS)
+
+ADD_DEFINITIONS(
+    -DUNICODE
+    -D_UNICODE
+    -D_CRT_SECURE_NO_DEPRECATE=1
+	-D_WIN32_WINNT=0x0500 # Required for VS 2008 (fails on XP and Win2000 without this fix)
+)
+
+INCLUDE_DIRECTORIES(
+)
+
+LINK_DIRECTORIES(
+)
+
+# IF(MSVC)
+#     SET(
+#         CompilerFlags
+#         CMAKE_CXX_FLAGS
+#         CMAKE_CXX_FLAGS_DEBUG
+#         CMAKE_CXX_FLAGS_RELEASE
+#         CMAKE_C_FLAGS
+#         CMAKE_C_FLAGS_DEBUG
+#         CMAKE_C_FLAGS_RELEASE
+#     )
+#     FOREACH(CompilerFlag ${CompilerFlags})
+#         STRING(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+#     ENDFOREACH()
+# ENDIF(MSVC)
+
+ADD_SUBDIRECTORY(duilib)
+ADD_SUBDIRECTORY(QQDemo)
+ADD_SUBDIRECTORY(360SafeDemo)
+ADD_SUBDIRECTORY(FlashDemo)
+ADD_SUBDIRECTORY(GameDemo)
+ADD_SUBDIRECTORY(ListDemo)
+ADD_SUBDIRECTORY(RichListDemo)
+# ADD_SUBDIRECTORY(MenuDemo) the sources in this project has error
+SET_TARGET_PROPERTIES(QQDemo        PROPERTIES FOLDER "Demos")
+SET_TARGET_PROPERTIES(360SafeDemo   PROPERTIES FOLDER "Demos")
+SET_TARGET_PROPERTIES(FlashDemo     PROPERTIES FOLDER "Demos")
+SET_TARGET_PROPERTIES(GameDemo      PROPERTIES FOLDER "Demos")
+SET_TARGET_PROPERTIES(ListDemo      PROPERTIES FOLDER "Demos")
+SET_TARGET_PROPERTIES(RichListDemo  PROPERTIES FOLDER "Demos")
+SET_TARGET_PROPERTIES(${PRJ_TARGET} PROPERTIES FOLDER "CMakePredefinedTargets")
