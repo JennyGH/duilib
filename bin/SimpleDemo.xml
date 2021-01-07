@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window size="800,600" mininfo="600,400" caption="0,0,0,30" bktrans="true" roundcorner="0,0" sizebox="5,5,5,5" showshadow="true" shadowsize="5" shadowcolor="#ff007acc" shadowdarkness="100" shadowcorner="0,0,0,0">
+    <VerticalLayout bkcolor="#ff2d2d30" childvalign="vcenter" childalign="center">
+        <Button name="closebtn" bkcolor="#ffff0000" width="100" height="30" text="关闭窗口"/>
+    </VerticalLayout>
+</Window>
